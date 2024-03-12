@@ -1,5 +1,9 @@
-require('dotenv').config();
-const { Client, IntentsBitField } = require('discord.js');
+const fs = require('node:fs');
+const path = require('node:path');
+const { Client, Collection, Events, GatewayIntentBits, IntentsBitField } = require('discord.js');
+const { token } = require('../config.json');
+const admin = require('D:/Coding/Perch2/firebase/firebase.js');
+
 
 //Permisje bota
 const client = new Client({
@@ -7,169 +11,79 @@ const client = new Client({
         IntentsBitField.Flags.Guilds, 
         IntentsBitField.Flags.GuildMembers, 
         IntentsBitField.Flags.GuildMessages, 
-        IntentsBitField.Flags.MessageContent
+        IntentsBitField.Flags.MessageContent,
+		GatewayIntentBits.Guilds,
     ]
 })
 
-//importowanie modułu fs do operacji na plikach
-const fs = require('fs');
-const userDataFilePath = 'records.json';
+client.commands = new Collection();
+const foldersPath = path.join(__dirname, '../commands');
+const commandFolders = fs.readdirSync(foldersPath);
 
-//funkcja do wczytania danych z pliku
-function loadUserData(){
-    try{
-        const rawData = fs.readFileSync(userDataFilePath);
-        return JSON.parse(rawData);
-    } catch (error){
-        return{};
-    }
+for (const folder of commandFolders) {
+	const commandsPath = path.join(foldersPath, folder);
+	const commandFiles = fs.readdirSync(commandsPath).filter(file => file.endsWith('.js'));
+	for (const file of commandFiles) {
+		const filePath = path.join(commandsPath, file);
+		const command = require(filePath);
+		if ('data' in command && 'execute' in command) {
+			client.commands.set(command.data.name, command);
+		} else {
+			console.log(`[WARNING] The command at ${filePath} is missing a required "data" or "execute" property.`);
+		}
+	}
 }
 
-//funkcja do zapisu danych do pliku JSON
-function saveUserData(userData){
-    fs.writeFileSync(userDataFilePath, JSON.stringify(userData, null, 4));
-}
-
-//funckja do wczytania i wyboru wiersza z pliku txt
-function getRandomLineFromFile(file){
-    const lines = fs.readFileSync(file, 'utf-8').split('\n');
-    const randomIdx = Math.floor(Math.random() * lines.length);
-    return lines[randomIdx];
-}
-
-//funkcja do wczytania pliku tekstowego
-function loadTxt(file){
-    const lines = fs.readFileSync(file, 'utf-8').split('\n');
-    return lines.join('\n');
-}
-
-//Jeśli jest online to komunikat w konsoli
-client.on('ready', (c) => {
-    console.log(`${c.user.username} is online.`);
+client.once(Events.ClientReady, readyClient => {
+	console.log(`Ready! Logged in as ${readyClient.user.tag}`);
 });
 
-const fishes = [
-    'Boleń',
-    'Jaź', 
-    'Jelec', 
-    'Jesiotr',
-    'Karaś', 
-    'Karp',
-    'Kleń',
-    'Leszcz',
-    'Lin',
-    'Okoń',
-    'Płoć',
-    'Rozpiór',
-    'Sandacz',
-    'Sum',
-    'Szczupak',
-    'Ukleja',
-    'Węgorz',
-    'Wzdręga',
-    'Żaglica'
-];
+client.on(Events.InteractionCreate, async interaction => {
+	if (!interaction.isChatInputCommand()) return;
+	const command = interaction.client.commands.get(interaction.commandName);
 
-//Jeśli jakaś wiadomość zostanie wysłana
+	if (!command) {
+		console.error(`No command matching ${interaction.commandName} was found.`);
+		return;
+	}
+
+	try {
+		await command.execute(interaction);
+	} catch (error) {
+		console.error(error);
+		if (interaction.replied || interaction.deferred) {
+			await interaction.followUp({ content: 'There was an error while executing this command!', ephemeral: true });
+		} else {
+			await interaction.reply({ content: 'There was an error while executing this command!', ephemeral: true });
+		}
+	}
+});
+
+//Dodawanie punktów do score
+function updateUsrPoints(userId, pointsToAdd){
+    const db = admin.database();
+    const pointsRef = db.ref("users/" + userId + "/points/");
+    pointsRef.transaction((currentPoints) => {
+        // Jeśli currentPoints nie zostało ustawione, zwróć 0, a następnie dodaj pointsToAdd
+        return (currentPoints || 0) + pointsToAdd;
+    }, function(error, committed, snapshot) {
+        if (error) {
+            console.log('Update failed:', error);
+        } else if (committed) {
+            console.log('User points updated to:', snapshot.val());
+        } else {
+            console.log('Transaction did not commit for some reason');
+        }
+    });
+}
+
+
 client.on('messageCreate', (message) => {
+    if (message.author.bot) return;
 
     const authorId = message.author.id;
-    const content = message.content;
-    const channel = message.channel;
-
-    const userData = loadUserData();    // <-- wczytanie danych z pliku
-
-    // -=-=-=-=-=-=] FUNKCJE [=-=-=-=-=-=-
-    //------------fotki rybek
-    function fishPic(typeOfFish){
-        channel.send({
-            files: [`Images/${typeOfFish}.png`]
-        });
-    }
-
-    //-----------lista komend !Lista
-    function listOfFishes(){
-        const fishList = fishes.map(fish => `- ${fish}`).join('\n');
-        channel.send(`Lista ryb:\n${fishList}`);
-    }
-
-    //-----------rokordy - zyciowki
-    function updatePersonalBest(){
-        const args = content.split(' ');
-        if (args.length === 4 && args[0] === '!Rekord') {
-            const fishName = args[1];
-            const sizeOfFish = args[2];
-            const place = args[3];
-
-            if (!userData[authorId]) {
-                userData[authorId] = {};
-            }
-            const newData = sizeOfFish+' '+place;
-            userData[authorId][fishName] = newData;
-            saveUserData(userData);
-
-            channel.send(`Rekord ${fishName} - ${newData} został dodany dla użytkownika ${message.author.username}.`);
-
-        }
-    }
-
-    //------------wyswietl zyciowki
-    function personalBests(){
-        const targetUsername = content.slice(9);
-        const targetUser = message.guild.members.cache.find(member => member.user.username === targetUsername);
-
-        if (targetUser && userData[targetUser.id]) {
-            const recordsList = Object.entries(userData[targetUser.id])
-                .map(([fish, sizeANDplace]) => `\n- ${fish} - ${sizeANDplace}`);
-
-            channel.send(`Rekordy użytkownika ${targetUsername}: ${recordsList}`);
-        } else {
-            channel.send(`Nie znaleziono rekordów użytkownika ${targetUsername}.`);
-        }
-    }
-
-    if (message.author.bot || !content.startsWith('!')){
-        return;
-    }
-
-    // Zdjęcia ryb
-    for (const fish of fishes) {
-        const command = `!${fish}`;
-        
-        if (content === command) {
-           fishPic(fish);
-        }
-    }
-    
-    // Lista ryb
-    if (content === '!Lista') {
-        listOfFishes();
-    }
-    
-    // Aktualizacja rekordów ryb
-    if (content.startsWith('!Rekord ')) {
-        updatePersonalBest();
-    }
-
-    // Wyświetlanie rekordów
-    if (content.startsWith('!Rekordy')) {
-        personalBests();
-    }
-
-    // Komenda !Help
-    if (content === '!Help') {
-        channel.send(loadTxt('list.txt'));
-    }
-    // Ciekawostki
-    if (content === '!Ciekawostka') {
-        channel.send(getRandomLineFromFile('curiosities'));
-    }
-})
-//Logowanie 
-client.login(process.env.TOKEN);
+    updateUsrPoints(authorId, 1);
+});
 
 
-//Przeciwko crashom
-client.on("debug", () => {})
-client.on("warn", () => {})
-client.on("error", () => {})
+client.login(token);

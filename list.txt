@@ -1,6 +1,0 @@
-Lista komend:
-- !Lista => wypisanie listy dostępnych zdjęć ryb
-- !<nazwa_ryby> => wyświetlenie zdjęcia ryby o danej nazwie
-- !Rekord <nazwa_ryby> <miara_ryby> <miejsce> => dodanie do listy rekordów lub nadpisanie rekordu danej ryby
-- !Rekordy <nazwa_użytkownika> => wypisanie listy rekordów danego użytkownika
-- !Ciekawostka => losowa ciekawostka o wędkarstwie

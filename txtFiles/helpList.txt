@@ -1,0 +1,9 @@
+Lista komend:
+- /lista => wypisanie listy dostępnych zdjęć ryb
+- /<nazwa_ryby> => wyświetlenie zdjęcia ryby o danej nazwie
+- /rekord <nazwa_ryby> <miara_ryby> <waga> <miejsce> => dodanie do listy rekordów lub nadpisanie rekordu danej ryby
+- /rekordy <nazwa_użytkownika> => wypisanie listy rekordów danego użytkownika
+- /ciekawostka => losowa ciekawostka o wędkarstwie
+- /randomchamp => losowa postać z Valorant
+- /score => aktualna liczba wysłanych wiadomości na serwerze
+- /rank => ranking serwera na podstawie wysłanych wiadomości
