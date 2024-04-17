@@ -2,7 +2,7 @@ const fs = require('node:fs');
 const path = require('node:path');
 const { Client, Collection, Events, GatewayIntentBits, IntentsBitField } = require('discord.js');
 const { token } = require('../config.json');
-const admin = require('D:/Coding/Perch2/firebase/firebase.js');
+const admin = require('D:/Coding/GitHub/Perch-discord_bot/firebase/firebase.js');
 
 
 //Permisje bota

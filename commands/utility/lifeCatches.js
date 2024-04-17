@@ -1,5 +1,5 @@
 const { SlashCommandBuilder } = require('discord.js');
-const admin = require('D:/Coding/Perch2/firebase/firebase.js');
+const admin = require('D:/Coding/GitHub/Perch-discord_bot/firebase/firebase.js');
 
 async function personalBests(interaction, targetUsername){
     const targetUser = interaction.guild.members.cache.find(member => member.user.username === targetUsername);

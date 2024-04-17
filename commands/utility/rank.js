@@ -1,5 +1,5 @@
 const { SlashCommandBuilder } = require('discord.js');
-const admin = require('D:/Coding/Perch2/firebase/firebase.js');
+const admin = require('D:/Coding/GitHub/Perch-discord_bot/firebase/firebase.js');
 
 async function displayTopUsersByPoints(interaction) {
     const db = admin.database();
