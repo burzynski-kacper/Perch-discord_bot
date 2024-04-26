@@ -1,5 +1,12 @@
 const { SlashCommandBuilder, EmbedBuilder, AttachmentBuilder } = require('discord.js');
-const { createCanvas, Image }= require('canvas');
+const { createCanvas, loadImage }= require('canvas');
+
+function setDesc(value){
+    if (value >= 0 && value <= 25) return "Nienawidzę cię!";
+    else if (value > 25 && value <= 50) return "Ehh...";
+    else if (value > 50 && value <= 75) return "Lubie cię :)";
+    else return "**KOCHAM**";
+}
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -17,44 +24,54 @@ module.exports = {
         const user1 = interaction.options.getUser('user1');
         const user2 = interaction.options.getUser('user2');
 
-        // Wygeneruj losowy poziom przyjaźni
         const randomPercentage = Math.floor(Math.random() * 101);
         
         // Canvas image
         const canvas = createCanvas(1920, 1080);
         const ctx = canvas.getContext('2d');
 
-        ctx.fileStyle = 'red';
-        const image = new Image();
-        image.src = 'https://i.pinimg.com/736x/2a/ae/25/2aae25f7bcb3b8c22903c568dbbb4a57.jpg';
+        // URLs of images
+        const imageURL = 'https://i.pinimg.com/736x/2a/ae/25/2aae25f7bcb3b8c22903c568dbbb4a57.jpg';
+        const avatarURL1 = user1.displayAvatarURL({ extension: 'jpg' });
+        const avatarURL2 = user2.displayAvatarURL({ extension: 'jpg' });
 
-        // const avatar1 = new Image();
-        // avatar1.src = user1.displayAvatarURL({ format: 'png', dynamic: true, size: 256 });
+        // Load images asynchronously
+        const [image, avatar1, avatar2] = await Promise.all([
+            loadImage(imageURL),
+            loadImage(avatarURL1),
+            loadImage(avatarURL2)
+        ]);
 
-        // const avatar2 = new Image();
-        // avatar2.src = user2.displayAvatarURL({ format: 'png', dynamic: true, size: 256 });
+        ctx.drawImage(image, 0, 0, 1920, 1080);
 
-        image.onload = async function(){
+        const x1 = 400, x2 = 1550, x3 = 950, y = 750, r = 256;
+        const img1X = x1 - 512 / 2, img1Y = y - 512 / 2;
+        const img2X = x2 - 512 / 2;
 
-            ctx.drawImage(image, 0, 0, 1920, 1080);
+        ctx.beginPath();
+        ctx.arc(x1, y, r, 0, Math.PI * 2, true);
+        ctx.arc(x2, y, r, 0, Math.PI * 2, true);
+        ctx.arc(x3, y, r, 0, Math.PI * 2, true);
+        ctx.closePath();
+        ctx.clip();
 
-            ctx.fillStyle = 'white';
-            ctx.font = '250px Sans';
-            ctx.fillText(`${user1.username}`, 50, 420);
-            ctx.fillStyle = 'red';
-            ctx.fillText(`${randomPercentage}%`, 800, 720);
-            ctx.fillStyle = 'white';
-            ctx.fillText(`${user2.username}`, 1200, 1020);
+        ctx.drawImage(avatar1, img1X, img1Y, 512, 512);
+        ctx.drawImage(avatar2, img2X, img1Y, 512, 512);
 
-            const buffer = canvas.toBuffer('image/png');
-            const attachment = new AttachmentBuilder(buffer, {name: 'image.png'});
+        ctx.font = '250px Sans';
+        ctx.fillStyle = 'red';
+        ctx.fillText(`${randomPercentage}%`, 700, 800);
+
+        const buffer = canvas.toBuffer('image/png');
+        const attachment = new AttachmentBuilder(buffer, {name: 'image.png'});
             
-            const embed = new EmbedBuilder()
-                .setTitle('Friendship level')
-                .setColor('Green')
-                .setImage('attachment://image.png');
+        const embed = new EmbedBuilder()
+            .setTitle('Friendship level')
+            .setDescription(setDesc(randomPercentage))
+            .setColor('Green')
+            .setImage('attachment://image.png');
     
-            await interaction.reply({ embeds: [embed], files: [attachment] });
-        };
+        await interaction.reply({ embeds: [embed], files: [attachment] });
+
     }
 };
