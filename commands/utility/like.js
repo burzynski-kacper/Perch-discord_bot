@@ -32,14 +32,16 @@ module.exports = {
 
         // URLs of images
         const imageURL = 'https://i.pinimg.com/736x/2a/ae/25/2aae25f7bcb3b8c22903c568dbbb4a57.jpg';
+        const heartURL = 'https://cdn.discordapp.com/attachments/1141002045021761656/1234158799762231427/heart.png?ex=662fb773&is=662e65f3&hm=10d147215c65d042186c1101c0eb51f45765d8d7169fd5e462009d91c89d6517&';
         const avatarURL1 = user1.displayAvatarURL({ extension: 'jpg' });
         const avatarURL2 = user2.displayAvatarURL({ extension: 'jpg' });
 
         // Load images asynchronously
-        const [image, avatar1, avatar2] = await Promise.all([
+        const [image, avatar1, avatar2, heart] = await Promise.all([
             loadImage(imageURL),
             loadImage(avatarURL1),
-            loadImage(avatarURL2)
+            loadImage(avatarURL2),
+            loadImage(heartURL)
         ]);
 
         ctx.drawImage(image, 0, 0, 1920, 1080);
@@ -57,10 +59,11 @@ module.exports = {
 
         ctx.drawImage(avatar1, img1X, img1Y, 512, 512);
         ctx.drawImage(avatar2, img2X, img1Y, 512, 512);
+        ctx.drawImage(heart, 700, img1Y, 512, 512);
 
-        ctx.font = '250px Sans';
-        ctx.fillStyle = 'red';
-        ctx.fillText(`${randomPercentage}%`, 700, 800);
+        ctx.font = '170px Sans';
+        ctx.fillStyle = 'white';
+        ctx.fillText(`${randomPercentage}%`, 780, 800);
 
         const buffer = canvas.toBuffer('image/png');
         const attachment = new AttachmentBuilder(buffer, {name: 'image.png'});
