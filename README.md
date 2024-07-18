@@ -1,35 +1,39 @@
 # Perch Discord Bot
 
-Perch Discord Bot to bot początkowo stworzony dla wędkarzy ale później rozwinęty o funkcje dla innych użytkowników serwera discord.
+## Overview
 
-## Komendy
+Perch Discord Bot is a bot initially created for anglers but later expanded with features for other Discord server users.
 
-Bot oferuje następujące komendy:
+## Features
 
-- `/lista` - Wypisanie listy dostępnych zdjęć ryb.
-- `/fish <nazwa_ryby>` - Wyświetlenie zdjęcia ryby o danej nazwie.
-- `/newlifecatch <nazwa_ryby> <miara_ryby> <waga> <miejsce>` - Dodanie do listy rekordów lub nadpisanie rekordu danej ryby.
-- `/lifecatches <nazwa_użytkownika>` - Wypisanie listy rekordów danego użytkownika.
-- `/ciekawostka` - Losowa ciekawostka o wędkarstwie.
-- `/randomchamp` - Losowa postać do gry Valorant.
-- `/score` - Aktualna liczba wysłanych wiadomości na serwerze.
-- `/rank` - Ranking serwera na podstawie wysłanych wiadomości.
-- `/skill` - Losowa liczba procentowa oscylująca twój skill.
-- `/like` - Losowa liczba procentowa oscylująca poziom przyjaźni pomiędzy dwoma użytkownikami. 
-- `/ping` - Odpowiada "Pong!".
-- `/user` - Wyświetla informacje o zalogowanym użytkowniku.
-- `/server` - Wyświetla informacje o serwerze.
-- `/help` - Wyświetla listę dostępnych komend.
+- `/lista`: Lists available fish photos.
+- `/fish <fish_name>`: Displays a photo of the specified fish.
+- `/newlifecatch <fish_name> <fish_size> <weight> <location>`: Adds or updates the record for the specified fish.
+- `/lifecatches <username>`: Lists the records of the specified user.
+- `/ciekawostka`: Random fishing trivia.
+- `/randomchamp`: Random character for the game Valorant.
+- `/score`: Current number of messages sent on the server.
+- `/rank`: Server ranking based on sent messages.
+- `/skill`: Random percentage representing your skill.
+- `/like`: Random percentage representing the friendship level between two users.
+- `/ping`: Responds with "Pong!".
+- `/user`: Displays information about the logged-in user.
+- `/server`: Displays information about the server.
+- `/help`: Displays a list of available commands.
 
-## Technologie
+## Technologies Used
 
-- [Node.js](https://nodejs.org/)
-- [Discord.js](https://discord.js.org/)
-- [Firebase](https://firebase.google.com/)
-- [Canvas](https://www.npmjs.com/package/canvas)
+- **Node.js**: For the backend runtime environment.
+- **Discord.js**: For interacting with the Discord API.
+- **Firebase**: For database and authentication.
+- **Canvas**: For image manipulation.
 
-## Autor
+## Code Structure
 
-- **KejDzi** - [GitHub](https://github.com/burzynski-kacper)
-
----
+- **commands/**: Contains all the slash commands.
+- **champs-images/**: Contains all images for `/randomchamp`.
+- **fish-images/**: Contains all images for `/fish <fish_name>`.
+- **images/**: Contains rest of used images.
+- **txtFiles/**: Contains files with string resources.
+- **firebase/**: Contains all files for database.
+- **src/**: Contains source file.
