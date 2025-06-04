@@ -1,28 +1,28 @@
-const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
+const { SlashCommandBuilder } = require('discord.js');
 
 function getImageUrl(percentage) {
     if (percentage >= 0 && percentage <= 10) {
-        return `https://i.pinimg.com/736x/cd/80/c7/cd80c7333f2b2e386822f31676439023.jpg`;
+        return `https://demotywatory.pl/uploads/202204/1649346791_qehtek_fb_plus.jpg`;
     } else if (percentage > 10 && percentage <= 20) {
-        return `https://i.pinimg.com/736x/5e/1e/4f/5e1e4f54f640f02eeba9f615f5c562fc.jpg`;
+        return `https://e-fortnite.pl/images/skiny/big/cid_038_athena_commando_m_disco.webp`;
     } else if (percentage > 20 && percentage <= 30) {
-        return `https://i.pinimg.com/236x/ad/c7/8d/adc78dd3ec56285621af72e761287c3d.jpg`;
+        return `https://i.pinimg.com/236x/a6/af/78/a6af787875cc96181305c157db06e0c1.jpg`;
     } else if (percentage > 30 && percentage <= 40) {
-        return `https://cdn.discordapp.com/attachments/947608457903743066/1217550319966486638/b1e28e1134cd9ae4d872f16d6c717639.png?ex=66046f19&is=65f1fa19&hm=12b2685963071eac5a3af23f3730d7eecaf3828172d28a9f86a362a6a58e78b6&`;
+        return `https://i.pinimg.com/736x/dc/c1/4c/dcc14c538d855777567e55630c883baf.jpg`;
     } else if (percentage > 40 && percentage <= 50) {
-        return `https://i.pinimg.com/236x/9f/33/2f/9f332f7f80838d416695c7dad7f0e83c.jpg`;
+        return `https://i.pinimg.com/474x/e1/cf/e9/e1cfe95b92fc42869c457ce6b17c3154.jpg`;
     } else if (percentage > 50 && percentage <= 60) {
-        return `https://i.pinimg.com/236x/d4/55/17/d45517d9d28e2b8ffd184e923c8067e9.jpg`;
+        return `https://i.pinimg.com/736x/09/81/fb/0981fb3914d0019a6834f22bea07145c.jpg`;
     } else if (percentage > 60 && percentage <= 70) {
-        return `https://i.pinimg.com/236x/f6/e9/72/f6e972ab451ca06bcb8333810d53d995.jpg`;
+        return `https://pbs.twimg.com/media/E6KJRXoXIAAA4iQ.jpg`;
     } else if (percentage > 70 && percentage <= 80) {
-        return `https://i.pinimg.com/236x/c8/13/44/c813443f84c6d70f8bcf5643947f03e1.jpg`;
+        return `https://i.imgflip.com/8qlbk3.jpg`;
     } else if (percentage > 80 && percentage <= 90) {
-        return `https://i.pinimg.com/236x/aa/0b/c5/aa0bc5ff9104d6b1aa885e6b17b6aa30.jpg`;
+        return `https://i.pinimg.com/736x/56/d5/ca/56d5ca92d1ccf9fc545738970535b939.jpg`;
     } else if (percentage > 90 && percentage <= 99){
-        return `https://i.pinimg.com/236x/20/65/46/206546895b84f8f5df2118a177fbb744.jpg`;
+        return `https://i.pinimg.com/736x/25/25/96/2525960c71a227a73391d87acf008099.jpg`;
     }else {
-        return `https://i.pinimg.com/564x/68/cd/83/68cd83ef9ab32a019bd25579d4eccf38.jpg`; 
+        return `https://static.posters.cz/image/750/tupac-finger-i81752.jpg`; 
     }
 }
 

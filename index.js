@@ -1,9 +1,13 @@
 const fs = require('node:fs');
 const path = require('node:path');
 const { Client, Collection, Events, GatewayIntentBits, IntentsBitField } = require('discord.js');
-const { token } = require('../config.json');
-const admin = require('D:/Coding/GitHub/Perch-discord_bot/firebase/firebase.js');
+// const { token } = require('/home/container/config.json');
+// const admin = require('/home/container/firebase/firebase.js');
 
+const { token } = require('./config.json');
+const admin = require('./firebase/firebase.js');
+
+const { playAudioInChannel } = require('./eventFunctions/audioHandler.js');
 
 //Permisje bota
 const client = new Client({
@@ -12,12 +16,13 @@ const client = new Client({
         IntentsBitField.Flags.GuildMembers, 
         IntentsBitField.Flags.GuildMessages, 
         IntentsBitField.Flags.MessageContent,
+		GatewayIntentBits.GuildVoiceStates,
 		GatewayIntentBits.Guilds,
     ]
 })
 
 client.commands = new Collection();
-const foldersPath = path.join(__dirname, '../commands');
+const foldersPath = path.join(__dirname, 'commands');
 const commandFolders = fs.readdirSync(foldersPath);
 
 for (const folder of commandFolders) {
@@ -82,8 +87,33 @@ client.on('messageCreate', (message) => {
     if (message.author.bot) return;
 
     const authorId = message.author.id;
+
     updateUsrPoints(authorId, 1);
+    
 });
+
+
+// Event: użytkownik dołącza na kanał głosowy
+client.on(Events.VoiceStateUpdate, (oldState, newState) => {
+	if (newState.member.user.bot) return;
+	if (!oldState.channel && newState.channel) {
+	  const channel = newState.channel;
+	  console.log(`Użytkownik ${newState.member.user.tag} dołączył do kanału ${channel.name}`);
+  
+	  // Ścieżka do pliku audio
+	const audioFolder = './audio/';
+    const files = fs.readdirSync(audioFolder).filter(file => file.endsWith('.mp3'));
+    if (files.length === 0) {
+      console.error('Brak plików audio w folderze.');
+      return;
+    }
+    const randomFile = files[Math.floor(Math.random() * files.length)];
+    const audioPath = path.join(audioFolder, randomFile);
+  
+	  // Wywołanie funkcji odtwarzania audio
+	  playAudioInChannel(channel, audioPath);
+	}
+  });
 
 
 client.login(token);
