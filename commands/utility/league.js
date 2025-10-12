@@ -30,29 +30,19 @@ module.exports = {
             console.log("Collecting PUUID - Pass");
             // console.log("PUUID: ", summonerPuuid);
 
-			// Collecting userId by puuid
-			const userIdResponse = await axios.get(`https://eun1.api.riotgames.com/lol/summoner/v4/summoners/by-puuid/${summonerPuuid}`, {
+			// Collecting rank data by puuid
+			const rankDataResponse = await axios.get(`https://eun1.api.riotgames.com/lol/league/v4/entries/by-puuid/${summonerPuuid}`, {
 				headers: {
 					'X-Riot-Token': riotApi
 				}
 			});
 
-            const userId = userIdResponse.data.id;
-            console.log("Collecting userID - Pass");
-            // console.log("UID: ", userId);
-
-            // Collecting rank data by userId
-			const rankData = await axios.get(`https://eun1.api.riotgames.com/lol/league/v4/entries/by-summoner/${userId}`, {
-				headers: {
-					'X-Riot-Token': riotApi
-				}
-			});
-            console.log("Collecting rank data - Pass");
-            // console.log("Rank data: ", rankData);
+            const rankData = rankDataResponse.data;
+            console.log("Collecting RankData - Pass");
 
 			// Sprawdzenie, czy użytkownik ma rangę w solo/duo lub flex
-			const soloDuoRank = rankData.data.find(entry => entry.queueType === 'RANKED_SOLO_5x5');
-			const flexRank = rankData.data.find(entry => entry.queueType === 'RANKED_FLEX_SR');
+			const soloDuoRank = rankData.find(entry => entry.queueType === 'RANKED_SOLO_5x5');
+			const flexRank = rankData.find(entry => entry.queueType === 'RANKED_FLEX_SR');
             let rankSoloDuo, rankFlex;
             let isSoloDuoUnranked, isFlexUnranked = false;
 
